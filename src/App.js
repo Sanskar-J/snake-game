@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Snake from './Snake';
 import Food from './Food';
+//import {useState} from 'react';
 
+let id,speed=200;
 const getRandomCoordinates = () => {
   let min = 1;
   let max = 98;
@@ -12,7 +14,7 @@ const getRandomCoordinates = () => {
 
 const initialState = {
   food: getRandomCoordinates(),
-  speed: 200,
+  //speed: 200,
   direction: 'RIGHT',
   snakeDots: [
     [0,0],
@@ -25,7 +27,7 @@ class App extends Component {
   state = initialState;
 
   componentDidMount() {
-    setInterval(this.moveSnake, this.state.speed);
+    id=setInterval(this.moveSnake, speed);
     document.onkeydown = this.onKeyDown;
   }
 
@@ -88,6 +90,7 @@ class App extends Component {
     let head = this.state.snakeDots[this.state.snakeDots.length - 1];
     if (head[0] >= 100 || head[1] >= 100 || head[0] < 0 || head[1] < 0) {
       this.onGameOver();
+      clearInterval(id);
     }
   }
 
@@ -98,6 +101,7 @@ class App extends Component {
     snake.forEach(dot => {
       if (head[0] === dot[0] && head[1] === dot[1]) {
         this.onGameOver();
+        clearInterval(id);
       }
     })
   }
@@ -123,20 +127,28 @@ class App extends Component {
   }
 
   increaseSpeed() {
-    if (this.state.speed > 10) {
-      this.setState({
-        speed: this.state.speed - 10
-      })
+    if(speed>10)
+    {
+    clearInterval(id);
+    setInterval(this.moveSnake,speed-=5);
     }
   }
 
   onGameOver() {
     alert(`Game Over! Your Score is: ${this.state.snakeDots.length-2}`);
-    this.setState(initialState)
+    this.setState(initialState);
+    window.location.reload();
   }
 
   render() {
+ 
+    // function insp(){
+    //   console.log(speed);
+    //   setInterval(this.moveSnake,50)
+
+    // }
     return (
+      
       <div>
         <h1 className="title">Snake-Chan</h1>
       <div className="game-area">
@@ -144,7 +156,7 @@ class App extends Component {
         <Snake snakeDots={this.state.snakeDots}/>
         <Food dot={this.state.food}/>
       </div>
-      <button></button>
+      {/* <button onClick={insp}>^IncreaseSpeed</button> */}
       <h3 className="title">Score: {this.state.snakeDots.length-2}</h3>
       </div>
     );
